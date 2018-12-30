@@ -18,7 +18,7 @@ class Blockchain {
     if(JSON.stringify(testChain[0]) !== JSON.stringify(Block.genesis())){
       return false;
     }
-
+    
     for(let i = 1; i<testChain.length; i++){
       const { timestamp, lastHash, hash, nonce, difficulty, data } = testChain[i];
       const actualLastHash = testChain[i-1].hash;
