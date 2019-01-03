@@ -1,13 +1,19 @@
+const uuid = require('uuid/v1');
+
 class Transaction {
     constructor({ senderWallet, recipient, amount }) {
-        this.senderWallet = senderWallet;
-        this.recipient = recipient;
-        this.amount = amount;
+        this.id = uuid();
+        this.outputMap = this.createOutputMap({ senderWallet, recipient, amount });
+        
+    }
+    
+    createOutputMap({ senderWallet, recipient, amount }){
+        const outputMap = {};
+        
+        outputMap[recipient] = amount;
+        outputMap[senderWallet.publicKey] = senderWallet.balance - amount;
 
-        this.id = 10;
-        this.outputMap = {};
-        this.outputMap[recipient] = amount;
-        this.outputMap[senderWallet.publicKey] = senderWallet.balance-amount;
+        return outputMap;
     }
 }
 
