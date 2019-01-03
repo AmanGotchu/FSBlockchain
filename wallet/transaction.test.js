@@ -24,7 +24,6 @@ describe('Transaction', () => {
         });
 
         it('outputs the amount to the recipient', () => {
-            console.log(transaction.outputMap[recipient]);
             expect(transaction.outputMap[recipient]).toEqual(amount);
         });
         
@@ -59,6 +58,39 @@ describe('Transaction', () => {
                     signature: transaction.input.signature
                 })
             ).toBe(true);
+        });
+    });
+
+    describe('validTransaction()', () => {
+        let errorMock;
+
+        beforeEach(() => {
+            errorMock = jest.fn();
+            global.console.error = errorMock;
+        });
+
+        describe('when the transaction is valid', () => {
+            it('returns true', () => {
+                expect(Transaction.validTransaction(transaction)).toBe(true);
+            });
+        });
+
+        describe('when the transaction is invalid', () => {
+            describe('and a transaction outputMap value is invalid', () => {
+                it('returns false and logs an error', () => {
+                    transaction.outputMap[senderWallet.publicKey] = 999999;
+                    expect(Transaction.validTransaction(transaction)).toBe(false);
+                    expect(errorMock).toHaveBeenCalled();
+                });
+            });
+
+            describe('and an input signature is invalid and logs an error', () => {
+                it('returns false', () => {
+                    transaction.input.signature = new Wallet().sign('data');
+                    expect(Transaction.validTransaction(transaction)).toBe(false);
+                    expect(errorMock).toHaveBeenCalled();
+                });
+            });
         });
     });
 });
